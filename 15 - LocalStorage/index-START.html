@@ -56,7 +56,7 @@
     <script>
       const addItems = document.querySelector(".add-items");
       const itemsList = document.querySelector(".plates");
-      const items = [];
+      const items = JSON.parse(localStorage.getItem("items")) || [];
 
       function addItem(e) {
         // stop the page from reloading, because by default a form will reload the page
@@ -69,9 +69,11 @@
 
         items.push(item);
         populateList(items, itemsList);
+        // Storing into local storage :
+        localStorage.setItem("items", JSON.stringify(items));
         // "this" is the form reference, and we want to clean the input
         this.reset();
-        console.table(items);
+        // console.table(items);
       }
 
       function populateList(plates = [], platesList) {
@@ -89,7 +91,20 @@
           .join("");
       }
 
+      function toggleDone(e) {
+        if (!e.target.matches("input")) return; // ship this unless it's an input
+        const el = e.target;
+        const index = el.dataset.index;
+        items[index].done = !items[index].done; // if false, gonna be true. If true gonna be false
+        // this is kind of flip flopping conditions
+        localStorage.setItem("items", JSON.stringify(items));
+        populateList(items, itemsList);
+      }
+
       addItems.addEventListener("submit", addItem);
+      itemsList.addEventListener("click", toggleDone);
+
+      populateList(items, itemsList);
     </script>
   </body>
 </html>
